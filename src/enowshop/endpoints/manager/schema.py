@@ -37,6 +37,23 @@ class ManageRegisterSchema(BaseModel):
 
         return data
 
+    @validator('birth_date')
+    def adjust_birth_date(cls, data):
+        data = datetime.strptime(data, '%Y-%m-%d')
+        data = data.strftime('%d-%m-%Y').upper()
+        return data
+
+    @validator('name')
+    def capitalize_name(cls, data: str):
+        data = data.capitalize()
+        return data
+
+    @validator('last_name')
+    def capitalize_name(cls, data: str):
+        data = data.capitalize()
+        return data
+
+
     @root_validator
     def convert_string_to_date(cls, values):
         values['birth_date'] = datetime.strptime(values.get('birth_date'), '%d-%m-%Y').date()
@@ -52,6 +69,10 @@ class ManagerLoginResponseSchema(BaseModel):
     access_token: str
     expires_in: int
     refresh_token: str
+    name: str
+    last_name: str
+    email: str
+    uuid: str
 
 
 class PhonesResponseSchema(PhonesSchema):
@@ -74,3 +95,25 @@ class EmployeesDataSchema(BaseModel):
     class Config:
         orm_mode = True
         use_enum_values = True
+
+
+class EmployeesDataListSchema(BaseModel):
+    uuid: str
+    name: str
+    last_name: str
+    email: str
+    cpf: str
+    position: str
+    admission_date: datetime
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+        use_enum_values = True
+
+
+class PaginateEmployeeListSchema(BaseModel):
+    total: int
+    offset: int
+    count: int
+    data: List[EmployeesDataListSchema]

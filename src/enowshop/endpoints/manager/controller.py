@@ -3,7 +3,7 @@ from fastapi import FastAPI, APIRouter, Request, status, Response, Depends
 
 from enowshop.endpoints.dependecies import verify_manager, verify_cpf
 from enowshop.endpoints.manager.schema import ManagerLoginResponseSchema, ManagerLoginSchema, \
-    ManageRegisterSchema, EmployeesDataSchema
+    ManageRegisterSchema, EmployeesDataSchema, PaginateEmployeeListSchema
 from enowshop.endpoints.manager.service import ManagerService
 from enowshop.infrastructure.containers import Container
 
@@ -18,7 +18,7 @@ async def login_employees(request: Request, login_data: ManagerLoginSchema,
     return response
 
 
-@router.post('/manager/employees', status_code=status.HTTP_201_CREATED, dependencies=[Depends(verify_manager)])
+@router.post('/manager/employees', status_code=status.HTTP_201_CREATED)
 @inject
 async def register_employees(request: Request, register_user_data: ManageRegisterSchema,
                              manager_service: ManagerService = Depends(Provide(Container.manager_service))):
@@ -32,6 +32,29 @@ async def register_employees(request: Request, register_user_data: ManageRegiste
 async def get_employees_info(request: Request, cpf: str,
                              manager_service: ManagerService = Depends(Provide(Container.manager_service))):
     employees_data = await manager_service.get_employees_info(cpf=cpf)
+    return employees_data
+
+
+@router.get('/manager/employees', status_code=status.HTTP_200_OK, response_model=PaginateEmployeeListSchema)
+@inject
+async def get_employee_list(request: Request,
+                            manager_service: ManagerService = Depends(Provide[Container.manager_service])):
+    params = request.query_params
+    params = {
+        'limit': int(params.get('limit', 12)),
+        'offset': int(params.get('offset', 0)),
+        'order_by': params.get('order_by', None)
+    }
+    employees_list = await manager_service.get_all_employees(params=params)
+    return employees_list
+
+
+@router.get('/employee/{uuid}', status_code=status.HTTP_200_OK, response_model=EmployeesDataSchema,
+            dependencies=[Depends(verify_manager)])
+@inject
+async def get_employees_info_by_uuid(request: Request, uuid: str,
+                                     manager_service: ManagerService = Depends(Provide(Container.manager_service))):
+    employees_data = await manager_service.get_employees_info_by_uuid(uuid=uuid)
     return employees_data
 
 
