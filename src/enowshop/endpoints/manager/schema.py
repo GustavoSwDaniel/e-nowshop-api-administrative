@@ -49,10 +49,9 @@ class ManageRegisterSchema(BaseModel):
         return data
 
     @validator('last_name')
-    def capitalize_name(cls, data: str):
+    def capitalize_last_name(cls, data: str):
         data = data.capitalize()
         return data
-
 
     @root_validator
     def convert_string_to_date(cls, values):

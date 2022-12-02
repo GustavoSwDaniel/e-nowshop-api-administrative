@@ -4,6 +4,10 @@ version = "0.0.1"
 description = ""
 authors = ["gustavoDanielT <gustavo.toledo@shipay.com.br>"]
 
+[[tool.poetry.source]]
+name = "enowsho-pypiserver"
+url = "http://18.207.202.104:8080/simple/"
+
 [tool.poetry.dependencies]
 python = "^3.7"
 SQLAlchemy = "^1.4.39"
@@ -13,7 +17,7 @@ dependency-injector = "^4.40.0"
 aiokafka = "^0.7.2"
 pycpfcnpj = "^1.7.0"
 
-e-nowshop-models = {path = "/Users/gustavotoledo/Project/e-nowshop/e-nowshop-models"}
+enowshop-models= {version = "v0.4.19", source = "enowsho-pypiserver"}
 
 httpx = "^0.23.0"
 asyncpg = "^0.26.0"
