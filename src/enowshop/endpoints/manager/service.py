@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 from typing import Dict
 
 from enowshop_models.models.employees import Employees
@@ -16,6 +17,7 @@ class ManagerService:
         self.employees_repo = employees_repository
         self.employees_phones_repo = employees_phones_repository
         self.keycloak_service = keycloak_service
+        self.logger = logging.getLogger(__name__)
 
     async def check_if_email_or_cpf_already_registered(self, email: str, cpf: str):
         await self.employees_repo.verify_email_or_cpf_already_register(email=email, cpf=cpf)

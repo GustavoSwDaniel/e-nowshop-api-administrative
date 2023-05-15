@@ -19,7 +19,10 @@ def create_app() -> False:
     from enowshop.endpoints.manager import controller as manager_module
     manager_module.configure(app)
 
-    container.wire(modules=[employees_module, manager_module])
+    from enowshop.endpoints.generic import controller as generic_module
+    generic_module.configure(app)
+
+    container.wire(modules=[employees_module, manager_module, generic_module])
 
     app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_credentials=True, allow_methods=['*'],
                        allow_headers=['*'])

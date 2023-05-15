@@ -15,6 +15,5 @@ async def login_employees(request: Request, login_data: LoginSchema,
     response = await users_employees.login(login_data=login_data)
     return response
 
-
 def configure(app: FastAPI):
     app.include_router(router)

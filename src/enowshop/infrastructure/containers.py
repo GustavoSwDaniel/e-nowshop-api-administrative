@@ -6,6 +6,7 @@ from enowshop.domain.keycloak.keycloak import KeycloakService
 from enowshop.endpoints.employees.service import EmployeesService
 from enowshop.endpoints.manager.service import ManagerService
 from enowshop.infrastructure.database.database_sql import PostgresDatabase
+from enowshop.endpoints.generic.service import GenericService
 
 
 class Container(containers.DeclarativeContainer):
@@ -31,3 +32,4 @@ class Container(containers.DeclarativeContainer):
     manager_service = providers.Factory(ManagerService, employees_repository=employees_repository,
                                         employees_phones_repository=employees_phones_repository,
                                         keycloak_service=keycloak_service)
+    generic_service = providers.Factory(GenericService, keycloak_service=keycloak_service)

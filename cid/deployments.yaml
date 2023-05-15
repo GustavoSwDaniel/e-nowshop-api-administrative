@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: e-nowshop-api-administrative-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: enowshop-api-administrative
+  template:
+    metadata:
+      labels:
+        app: enowshop-api-administrative
+    spec:
+      containers:
+        - name: enowshop-api-administrative
+          image: gcr.io/enowhop/enowshop-api-administrative:latest
+          ports:
+              - containerPort: 8080
+          env:
+            - name: A-POSTGRES_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: api-user-secrets
+                  key: A-POSTGRES_DATABASE_URL
+            - name: KEYCLOAK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: api-user-secrets
+                  key: KEYCLOAK_URL
+            - name: KEYCLOAK_REALMS
+              valueFrom:
+                secretKeyRef:
+                  name: api-user-secrets
+                  key: KEYCLOAK_REALMS
+            - name: KEYCLOAK_CLIENT_ID_MANAGER
+              valueFrom:
+                secretKeyRef:
+                  name: api-administrative-secrets
+                  key: KEYCLOAK_CLIENT_ID_ADMIN_CLI
+            - name: KEYCLOAK_CLIENT_ID_EMPLOYEES
+              valueFrom:
+                secretKeyRef:
+                  name: pi-administrative-secrets
+                  key: KEYCLOAK_CLIENT_ID_EMPLOYEES
+            - name: KEYCLOAK_CLIENT_SECRET_MANAGER
+              valueFrom:
+                secretKeyRef:
+                  name: api-user-secrets
+                  key: KEYCLOAK_CLIENT_SECRET_MANAGER
+            - name: KEYCLOAK_CLIENT_SECRET_EMPLOYEES
+              valueFrom:
+                secretKeyRef:
+                  name: api-administrative-secrets
+                  key: KEYCLOAK_CLIENT_SECRET_MANAGER 
+            - name: KEYCLOAK_CLIENT_ID_ADMIN_CLI
+              valueFrom:
+                secretKeyRef:
+                  name: api-administrative-secrets
+                  key: KEYCLOAK_CLIENT_ID_ADMIN_CLI
+            - name: KEYCLOAK_CLIENT_SECRET_ADMIN_CLI
+              valueFrom:
+                secretKeyRef:
+                  name: api-administrative-secrets
+                  key: KEYCLOAK_CLIENT_SECRET_ADMIN_CLI
+            - name: KEYCLOAK_MANAGER_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: api-administrative-secrets
+                  key: KEYCLOAK_MANAGER_PUBLIC_KEY
+            - name: PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: api-administrative-secrets
+                  key: PUBLIC_KEY
+            

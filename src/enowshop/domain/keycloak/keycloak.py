@@ -108,7 +108,6 @@ class KeycloakService:
                 f'{self.__keycloak_url}/auth/admin/realms/{self.__realm}/users',
                 json=payload_create_user
             )
-
         if response.status_code != httpx.codes.CREATED:
             raise KeyCloakException(f'Error register in keycloak. Error: {response.json()}')
 
@@ -190,9 +189,10 @@ class KeycloakService:
 
     async def auth_manager(self, username: str, password: str) -> Dict:
         async with httpx.AsyncClient(**self.__headers) as client:
+            data = self.__build_payload_login_manager(username=username, password=password)
             response = await client.post(
                 f'{self.__keycloak_url}/auth/realms/manager/protocol/openid-connect/token',
-                data=self.__build_payload_login_manager(username=username, password=password)
+                data=data
             )
             if response.status_code == httpx.codes.UNAUTHORIZED:
                 raise KeyCloakException('User does not authorized')
@@ -200,3 +200,40 @@ class KeycloakService:
                 raise KeyCloakException('Error during login')
 
         return response.json()
+
+    async def revoke_token(self, token: str, client_id: str, client_secret: str, realm: str):
+        print(f'{self.__keycloak_url}/auth/realms/{realm}/protocol/openid-connect/revoke')
+        print(token)
+        print(client_id)
+        print(client_secret)
+        print(realm)
+        async with httpx.AsyncClient(**self.__headers) as client:
+            response = await client.post(
+                f'{self.__keycloak_url}/auth/realms/{realm}/protocol/openid-connect/revoke',
+                data={
+                    'client_id': client_id,
+                    'client_secret': client_secret,
+                    'token': token
+                }
+            )
+            print(response.status_code)
+            if response.status_code != httpx.codes.OK:
+                raise KeyCloakException('Error during revoke token')
+            
+    async def close_session(self, refresh_token: str, client_id: str, client_secret: str, realm: str):
+        async with httpx.AsyncClient(**self.__headers) as client:
+            response = await client.post(
+                f'{self.__keycloak_url}/auth/realms/{realm}/protocol/openid-connect/logout',
+                data={
+                    'client_id': client_id,
+                    'client_secret': client_secret,
+                    'refresh_token': refresh_token
+                }
+            )
+            print(response.status_code)
+            if response.status_code != httpx.codes.NO_CONTENT:
+                raise KeyCloakException('Error during logout')
+
+    async def logout(self, refresh_token: str, token: str, client_id: str, client_secret: str, realm: str):
+        await self.revoke_token(token=token, client_id=client_id, client_secret=client_secret, realm=realm)
+        await self.close_session(refresh_token=refresh_token, client_id=client_id, client_secret=client_secret, realm=realm)

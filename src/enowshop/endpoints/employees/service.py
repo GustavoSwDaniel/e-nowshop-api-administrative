@@ -34,5 +34,16 @@ class EmployeesService:
     async def login(self, login_data: LoginSchema) -> Dict:
         response = await self.keycloak_service.auth_user(username=login_data.username,
                                                          password=login_data.password)
+        user_data = await self.employees_repo.get_employment_info_by_email(params={'email': login_data.username})
+        
+        response['name'] = user_data.name
+        response['last_name'] = user_data.last_name
+        response['email'] = user_data.email
+        response['uuid'] = user_data.uuid
+
         return response
 
+    async def logout_employee(self, token: str, client_id: str, client_secret: str):
+        await self.keycloak_service.logout(token=token, client_id=client_id,
+                                           client_secret=client_secret,
+                                           realm='manager')

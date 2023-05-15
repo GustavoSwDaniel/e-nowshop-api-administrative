@@ -1,7 +1,8 @@
+from config import Config
 from dependency_injector.wiring import inject, Provide
 from fastapi import FastAPI, APIRouter, Request, status, Response, Depends
 
-from enowshop.endpoints.dependecies import verify_manager, verify_cpf
+from enowshop.endpoints.dependecies import verify_jwt, verify_manager, verify_cpf, verify_role
 from enowshop.endpoints.manager.schema import ManagerLoginResponseSchema, ManagerLoginSchema, \
     ManageRegisterSchema, EmployeesDataSchema, PaginateEmployeeListSchema
 from enowshop.endpoints.manager.service import ManagerService
@@ -14,6 +15,7 @@ router = APIRouter()
 @inject
 async def login_employees(request: Request, login_data: ManagerLoginSchema,
                           manager_service: ManagerService = Depends(Provide(Container.manager_service))):
+    print(login_data)
     response = await manager_service.login(login_data=login_data)
     return response
 
@@ -38,6 +40,7 @@ async def get_employees_info(request: Request, cpf: str,
 @router.get('/manager/employees', status_code=status.HTTP_200_OK, response_model=PaginateEmployeeListSchema)
 @inject
 async def get_employee_list(request: Request,
+                            dependencies=[Depends(verify_manager)],
                             manager_service: ManagerService = Depends(Provide[Container.manager_service])):
     params = request.query_params
     params = {
@@ -50,7 +53,7 @@ async def get_employee_list(request: Request,
 
 
 @router.get('/employee/{uuid}', status_code=status.HTTP_200_OK, response_model=EmployeesDataSchema,
-            dependencies=[Depends(verify_manager)])
+            dependencies=[Depends(verify_role)])
 @inject
 async def get_employees_info_by_uuid(request: Request, uuid: str,
                                      manager_service: ManagerService = Depends(Provide(Container.manager_service))):
