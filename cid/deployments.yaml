@@ -37,7 +37,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: api-administrative-secrets
-                  key: KEYCLOAK_CLIENT_ID_ADMIN_CLI
+                  key: KEYCLOAK_CLIENT_ID_MANAGER
             - name: KEYCLOAK_CLIENT_ID_EMPLOYEES
               valueFrom:
                 secretKeyRef:
