@@ -191,6 +191,7 @@ class KeycloakService:
         async with httpx.AsyncClient(**self.__headers) as client:
             print(self.__client_secret_manager)
             data = self.__build_payload_login_manager(username=username, password=password)
+            print(data)
             response = await client.post(
                 f'{self.__keycloak_url}/auth/realms/manager/protocol/openid-connect/token',
                 data=data
