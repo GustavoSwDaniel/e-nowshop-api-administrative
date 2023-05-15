@@ -4,7 +4,7 @@ metadata:
   name: enowshop-api-administrative-service
 spec:
   selector:
-    app: enowshop-api-user
+    app: enowshop-api-administrative-deployment
   ports:
   - port: 80
     targetPort: 8080
