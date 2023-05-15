@@ -16,7 +16,7 @@ spec:
         - name: enowshop-api-administrative
           image: gcr.io/enowhop/enowshop-api-administrative:5
           ports:
-              - containerPort: 8080
+              - containerPort: 8081
           env:
             - name: A-POSTGRES_DATABASE_URL
               valueFrom:

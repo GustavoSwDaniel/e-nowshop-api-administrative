@@ -4,8 +4,8 @@ metadata:
   name: enowshop-api-administrative-service
 spec:
   selector:
-    app: enowshop-api-administrative-deployment
+    app: enowshop-api-administrative
   ports:
   - port: 80
-    targetPort: 8080
+    targetPort: 8081
   type: NodePort
