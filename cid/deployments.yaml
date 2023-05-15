@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: enowshop-api-administrative
-          image: gcr.io/enowhop/enowshop-api-administrative:latest
+          image: gcr.io/enowhop/enowshop-api-administrative:5
           ports:
               - containerPort: 8080
           env:
