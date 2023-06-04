@@ -67,6 +67,7 @@ class KeycloakService:
 
     async def auth_user(self, username: str, password: str) -> Dict:
         async with httpx.AsyncClient(**self.__headers) as client:
+            print(self.__realm)
             response = await client.post(
                 f'{self.__keycloak_url}/auth/realms/{self.__realm}/protocol/openid-connect/token',
                 data=self.__build_payload_to_authorization(payload_type='default_user', username=username,
